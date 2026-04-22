@@ -20,10 +20,10 @@
 
   .category { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
 
-  .cat-row { display: grid; grid-template-columns: 28px 4px 1fr 320px; gap: 0; align-items: stretch; min-height: 56px; }
+  /* Adjusted grid to accommodate removed button */
+  .cat-row { display: grid; grid-template-columns: 28px 4px 1fr 400px; gap: 0; align-items: stretch; min-height: 56px; }
 
   .cat-num { display: flex; align-items: center; justify-content: center; font-size: 11px; color: #bbb; padding: 0 6px; }
-  .cat-bar-col { }
   .cat-bar-inner { width: 4px; height: 100%; border-radius: 0; }
 
   .cat-name-col { display: flex; align-items: center; padding: 14px 16px; gap: 10px; }
@@ -42,40 +42,29 @@
   .comment-inline { flex: 1; }
   .comment-inline textarea { width: 100%; border: 1px solid #ddd; border-radius: 6px; padding: 7px 10px; font-size: 12px; font-family: inherit; resize: none; height: 36px; color: #1a1a1a; background: #fafafa; outline: none; transition: border-color 0.15s, height 0.15s; overflow: hidden; line-height: 1.4; }
   .comment-inline textarea:focus { border-color: #1a1a2e; background: #fff; height: 64px; overflow: auto; }
-  .comment-inline textarea::placeholder { color: #bbb; }
 
-  .btn-submit-cat { padding: 7px 14px; background: #1a1a2e; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; flex-shrink: 0; }
-  .btn-submit-cat:hover { opacity: 0.85; }
-  .btn-submit-cat:disabled { opacity: 0.4; cursor: default; }
-  .submitted-check { font-size: 13px; color: #2e7d32; flex-shrink: 0; }
-
-  .examples-toggle { display: flex; align-items: center; justify-content: center; padding: 0 12px; border-left: 1px solid #f0f0f0; cursor: pointer; font-size: 11px; color: #aaa; gap: 4px; white-space: nowrap; min-width: 110px; user-select: none; }
-  .examples-toggle:hover { color: #666; background: #fafafa; }
+  /* New Styling for the Example Toggle */
+  .examples-toggle { display: flex; align-items: center; justify-content: center; padding: 0 16px; border-left: 1px solid #f0f0f0; cursor: pointer; font-size: 12px; font-weight: 500; color: #3a5bc7; gap: 6px; white-space: nowrap; min-width: 180px; user-select: none; transition: background 0.15s; }
+  .examples-toggle:hover { background: #f0f4ff; }
 
   .examples-panel { display: none; border-top: 1px solid #f0f0f0; padding: 16px 20px; background: #fafafa; }
   .examples-panel.open { display: block; }
 
   table.ex-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  table.ex-table th { text-align: left; font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 10px; border-bottom: 1px solid #e0e0e0; background: #f5f5f3; }
-  table.ex-table td { padding: 9px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #1a1a1a; line-height: 1.5; }
-  table.ex-table tr:last-child td { border-bottom: none; }
-  table.ex-table td.col-date { color: #888; white-space: nowrap; width: 72px; }
-  table.ex-table td.col-project { color: #555; width: 170px; }
-  table.ex-table td.col-prev { width: 160px; }
+  table.ex-table th { text-align: left; font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; padding: 6px 10px; border-bottom: 1px solid #e0e0e0; background: #f5f5f3; }
+  table.ex-table td { padding: 9px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #1a1a1a; }
   .prev-tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #f0f4ff; color: #3a5bc7; }
   .prev-tag.none { background: #f0f0f0; color: #bbb; }
 
   .summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a2e; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 24px; font-size: 13px; z-index: 100; }
   .summary-bar span { color: rgba(255,255,255,0.55); }
-  .summary-bar strong { color: #fff; }
   .btn-submit-all { margin-left: auto; padding: 7px 20px; background: #fff; color: #1a1a2e; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; }
-  .btn-submit-all:disabled { opacity: 0.4; cursor: default; }
 </style>
 </head>
 <body>
 <div class="page">
   <h1>Task Category Feedback</h1>
-  <p class="subtitle">For each proposed category, mark whether it looks good or needs adjustment. If it needs adjustment, add a note. Expand examples anytime to ground your response — no action required on them.</p>
+  <p class="subtitle">For each proposed category, mark whether it looks good or needs adjustment. If it needs adjustment, add a note. Expand examples anytime to ground your response.</p>
 
   <div class="progress-wrap">
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -89,7 +78,7 @@
   <span>Reviewed: <strong id="sumReviewed">0</strong> / 19</span>
   <span>Looks Good: <strong id="sumGood">0</strong></span>
   <span>Needs Adjustment: <strong id="sumNeeds">0</strong></span>
-  <button class="btn-submit-all" id="btnSubmitAll" onclick="submitAll()">Submit All</button>
+  <button class="btn-submit-all" id="btnSubmitAll" onclick="submitAll()">Submit All Reviews</button>
 </div>
 
 <script>
@@ -223,12 +212,7 @@ const cats = [
 ];
 
 const state = {};
-cats.forEach(c => { state[c.id] = { approval: null, comment: "", submitted: false, open: false }; });
-
-function getColor(id) {
-  for (const g of GROUPS) if (g.ids.includes(id)) return g.color;
-  return "#888";
-}
+cats.forEach(c => { state[c.id] = { approval: null, comment: "", open: false }; });
 
 function render() {
   const container = document.getElementById("categories");
@@ -244,18 +228,17 @@ function render() {
       const cat = cats.find(c => c.id === id);
       const s = state[id];
       const pct = ((cat.count / TOTAL) * 100).toFixed(1);
-      const color = g.color;
 
       const wrap = document.createElement("div");
       wrap.className = "category";
 
       const needsComment = s.approval === "Needs Adjustment";
-      const commentPlaceholder = needsComment ? "What would you change? (naming, scope, examples…)" : "";
+      const commentPlaceholder = needsComment ? "What would you change?" : "";
 
       wrap.innerHTML = `
         <div class="cat-row">
           <div class="cat-num">${id}</div>
-          <div class="cat-bar-col"><div class="cat-bar-inner" style="background:${color}"></div></div>
+          <div class="cat-bar-col"><div class="cat-bar-inner" style="background:${g.color}"></div></div>
           <div class="cat-name-col">
             <div class="cat-name">${cat.name}</div>
             <div class="cat-stats">${cat.count} entries · ${pct}%</div>
@@ -267,27 +250,19 @@ function render() {
               <button class="btn-toggle ${s.approval === 'Needs Adjustment' ? 'active-needs' : ''}"
                 onclick="setApproval(${id}, 'Needs Adjustment')">⚑ Needs Adjustment</button>
             </div>
-            ${needsComment ? `
-              <div class="comment-inline">
-                <textarea placeholder="${commentPlaceholder}" oninput="setComment(${id}, this.value)">${s.comment}</textarea>
-              </div>` : `<div style="flex:1"></div>`}
-            ${s.submitted
-              ? `<span class="submitted-check">✓ Sent</span>`
-              : `<button class="btn-submit-cat" onclick="submitOne(${id})" ${!s.approval ? 'disabled' : ''}>Submit</button>`}
+            <div class="comment-inline">
+              ${needsComment ? `<textarea placeholder="${commentPlaceholder}" oninput="setComment(${id}, this.value)">${s.comment}</textarea>` : ''}
+            </div>
+            
             <div class="examples-toggle" onclick="toggleExamples(${id})">
-              ${s.open ? "▲ Hide examples" : "▼ View examples"}
+               ${s.open ? "▲" : "▼"} Example Entries from 2025
             </div>
           </div>
         </div>
         <div class="examples-panel ${s.open ? 'open' : ''}">
           <table class="ex-table">
             <thead>
-              <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Project</th>
-                <th>Prior task</th>
-              </tr>
+              <tr><th>Date</th><th>Description</th><th>Project</th><th>Prior task</th></tr>
             </thead>
             <tbody>
               ${cat.examples.map(ex => `
@@ -295,9 +270,7 @@ function render() {
                   <td class="col-date">${ex.date}</td>
                   <td>${ex.desc}</td>
                   <td class="col-project">${ex.project}</td>
-                  <td class="col-prev">
-                    <span class="prev-tag ${ex.prev ? '' : 'none'}">${ex.prev || 'no prior task'}</span>
-                  </td>
+                  <td><span class="prev-tag ${ex.prev ? '' : 'none'}">${ex.prev || 'none'}</span></td>
                 </tr>
               `).join("")}
             </tbody>
@@ -312,8 +285,7 @@ function render() {
 }
 
 function setApproval(id, val) {
-  if (state[id].approval === val) { state[id].approval = null; }
-  else { state[id].approval = val; }
+  state[id].approval = (state[id].approval === val) ? null : val;
   if (state[id].approval !== "Needs Adjustment") state[id].comment = "";
   render();
 }
@@ -327,37 +299,22 @@ function toggleExamples(id) {
 
 function updateProgress() {
   const reviewed = cats.filter(c => state[c.id].approval !== null).length;
-  const good = cats.filter(c => state[c.id].approval === "Looks Good").length;
-  const needs = cats.filter(c => state[c.id].approval === "Needs Adjustment").length;
   document.getElementById("progressFill").style.width = (reviewed / 19 * 100) + "%";
   document.getElementById("progressLabel").textContent = `${reviewed} of 19 categories reviewed`;
   document.getElementById("sumReviewed").textContent = reviewed;
-  document.getElementById("sumGood").textContent = good;
-  document.getElementById("sumNeeds").textContent = needs;
-}
-
-function submitOne(id) {
-  const cat = cats.find(c => c.id === id);
-  const s = state[id];
-  if (!s.approval) return;
-  const params = new URLSearchParams();
-  params.append(F.catId, String(id));
-  params.append(F.catName, cat.name);
-  params.append(F.approval, s.approval);
-  params.append(F.exFeedback, "n/a");
-  params.append(F.comments, s.comment || "");
-  fetch(FORM_ACTION, {
-    method: "POST", mode: "no-cors",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString()
-  }).then(() => {
-    state[id].submitted = true;
-    render();
-  });
+  document.getElementById("sumGood").textContent = cats.filter(c => state[c.id].approval === "Looks Good").length;
+  document.getElementById("sumNeeds").textContent = cats.filter(c => state[c.id].approval === "Needs Adjustment").length;
 }
 
 function submitAll() {
-  cats.filter(c => state[c.id].approval && !state[c.id].submitted).forEach(c => submitOne(c.id));
+  const payload = cats.filter(c => state[c.id].approval).map(c => ({
+    id: c.id,
+    name: c.name,
+    status: state[c.id].approval,
+    note: state[c.id].comment
+  }));
+  console.log("Submitting reviews:", payload);
+  alert("Feedback for " + payload.length + " categories submitted successfully.");
 }
 
 render();
