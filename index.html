@@ -7,75 +7,80 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f3; color: #1a1a1a; font-size: 15px; line-height: 1.6; }
-  .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 100px; }
   h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
-  .subtitle { font-size: 13px; color: #666; margin-bottom: 32px; }
-  .progress-bar { height: 4px; background: #e0e0e0; border-radius: 2px; margin-bottom: 32px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 28px; }
+
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-bar { height: 4px; background: #e0e0e0; border-radius: 2px; }
   .progress-fill { height: 4px; background: #1a1a2e; border-radius: 2px; transition: width 0.4s ease; }
   .progress-label { font-size: 12px; color: #888; margin-top: 6px; }
 
-  .category { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
-  .cat-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; user-select: none; }
-  .cat-header:hover { background: #fafafa; }
-  .cat-num { font-size: 12px; color: #999; min-width: 20px; }
-  .cat-bar { width: 3px; height: 28px; border-radius: 2px; flex-shrink: 0; }
-  .cat-name { flex: 1; font-size: 14px; font-weight: 500; }
-  .cat-stats { font-size: 12px; color: #888; text-align: right; line-height: 1.4; }
-  .approval-badges { display: flex; gap: 6px; align-items: center; }
-  .badge-good { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #e8f5e9; color: #2e7d32; font-weight: 500; display: none; }
-  .badge-needs { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #fff3e0; color: #e65100; font-weight: 500; display: none; }
-  .chevron { font-size: 11px; color: #bbb; margin-left: 4px; }
+  .group-label { font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.07em; margin: 24px 0 8px; }
 
-  .cat-body { border-top: 1px solid #f0f0f0; padding: 18px; display: none; }
-  .cat-body.open { display: block; }
+  .category { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
 
-  .approval-row { display: flex; gap: 10px; margin-bottom: 20px; }
-  .btn-approval { flex: 1; padding: 9px 16px; border-radius: 7px; border: 1.5px solid #ddd; background: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; color: #444; }
-  .btn-approval:hover { border-color: #aaa; }
-  .btn-approval.selected-good { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; }
-  .btn-approval.selected-needs { background: #fff3e0; border-color: #ff9800; color: #e65100; }
+  .cat-row { display: grid; grid-template-columns: 28px 4px 1fr 320px; gap: 0; align-items: stretch; min-height: 56px; }
 
-  .examples-label { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
-  .example { display: grid; grid-template-columns: 20px 80px 1fr 150px; gap: 10px; align-items: start; padding: 9px 0; border-bottom: 1px solid #f5f5f5; font-size: 12px; }
-  .example:last-child { border-bottom: none; }
-  .ex-check input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; margin-top: 2px; accent-color: #1a1a2e; }
-  .ex-date { color: #888; padding-top: 1px; }
-  .ex-desc { color: #1a1a1a; line-height: 1.5; }
-  .ex-project { font-size: 11px; color: #999; margin-top: 2px; }
-  .ex-prev { text-align: right; }
-  .prev-tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #f0f4ff; color: #3a5bc7; white-space: nowrap; }
-  .prev-tag.none { background: #f5f5f5; color: #bbb; }
+  .cat-num { display: flex; align-items: center; justify-content: center; font-size: 11px; color: #bbb; padding: 0 6px; }
+  .cat-bar-col { }
+  .cat-bar-inner { width: 4px; height: 100%; border-radius: 0; }
 
-  .comment-section { margin-top: 18px; }
-  .comment-section label { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
-  .comment-section textarea { width: 100%; border: 1px solid #ddd; border-radius: 7px; padding: 10px 12px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 72px; color: #1a1a1a; background: #fafafa; outline: none; transition: border-color 0.15s; }
-  .comment-section textarea:focus { border-color: #1a1a2e; background: #fff; }
+  .cat-name-col { display: flex; align-items: center; padding: 14px 16px; gap: 10px; }
+  .cat-name { font-size: 14px; font-weight: 500; flex: 1; }
+  .cat-stats { font-size: 12px; color: #aaa; white-space: nowrap; }
 
-  .submit-row { margin-top: 14px; display: flex; align-items: center; gap: 12px; }
-  .btn-submit { padding: 9px 22px; background: #1a1a2e; color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
-  .btn-submit:hover { opacity: 0.85; }
-  .btn-submit:disabled { opacity: 0.4; cursor: default; }
-  .submit-status { font-size: 12px; color: #888; }
-  .submit-status.ok { color: #2e7d32; }
-  .submit-status.err { color: #c62828; }
+  .cat-controls { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-left: 1px solid #f0f0f0; }
 
-  .summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a2e; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 20px; font-size: 13px; }
-  .summary-bar span { color: rgba(255,255,255,0.6); }
+  .toggle-wrap { display: flex; border: 1px solid #ddd; border-radius: 7px; overflow: hidden; flex-shrink: 0; }
+  .btn-toggle { padding: 7px 14px; font-size: 12px; font-weight: 500; border: none; background: #fff; cursor: pointer; color: #666; transition: all 0.15s; white-space: nowrap; }
+  .btn-toggle:first-child { border-right: 1px solid #ddd; }
+  .btn-toggle:hover { background: #f5f5f5; }
+  .btn-toggle.active-good { background: #e8f5e9; color: #2e7d32; }
+  .btn-toggle.active-needs { background: #fff3e0; color: #e65100; }
+
+  .comment-inline { flex: 1; }
+  .comment-inline textarea { width: 100%; border: 1px solid #ddd; border-radius: 6px; padding: 7px 10px; font-size: 12px; font-family: inherit; resize: none; height: 36px; color: #1a1a1a; background: #fafafa; outline: none; transition: border-color 0.15s, height 0.15s; overflow: hidden; line-height: 1.4; }
+  .comment-inline textarea:focus { border-color: #1a1a2e; background: #fff; height: 64px; overflow: auto; }
+  .comment-inline textarea::placeholder { color: #bbb; }
+
+  .btn-submit-cat { padding: 7px 14px; background: #1a1a2e; color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; flex-shrink: 0; }
+  .btn-submit-cat:hover { opacity: 0.85; }
+  .btn-submit-cat:disabled { opacity: 0.4; cursor: default; }
+  .submitted-check { font-size: 13px; color: #2e7d32; flex-shrink: 0; }
+
+  .examples-toggle { display: flex; align-items: center; justify-content: center; padding: 0 12px; border-left: 1px solid #f0f0f0; cursor: pointer; font-size: 11px; color: #aaa; gap: 4px; white-space: nowrap; min-width: 110px; user-select: none; }
+  .examples-toggle:hover { color: #666; background: #fafafa; }
+
+  .examples-panel { display: none; border-top: 1px solid #f0f0f0; padding: 16px 20px; background: #fafafa; }
+  .examples-panel.open { display: block; }
+
+  table.ex-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.ex-table th { text-align: left; font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 10px; border-bottom: 1px solid #e0e0e0; background: #f5f5f3; }
+  table.ex-table td { padding: 9px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #1a1a1a; line-height: 1.5; }
+  table.ex-table tr:last-child td { border-bottom: none; }
+  table.ex-table td.col-date { color: #888; white-space: nowrap; width: 72px; }
+  table.ex-table td.col-project { color: #555; width: 170px; }
+  table.ex-table td.col-prev { width: 160px; }
+  .prev-tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #f0f4ff; color: #3a5bc7; }
+  .prev-tag.none { background: #f0f0f0; color: #bbb; }
+
+  .summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a2e; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 24px; font-size: 13px; z-index: 100; }
+  .summary-bar span { color: rgba(255,255,255,0.55); }
   .summary-bar strong { color: #fff; }
   .btn-submit-all { margin-left: auto; padding: 7px 20px; background: #fff; color: #1a1a2e; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; }
   .btn-submit-all:disabled { opacity: 0.4; cursor: default; }
-
-  .group-label { font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.07em; margin: 24px 0 8px; }
-  .group-label:first-child { margin-top: 0; }
 </style>
 </head>
 <body>
 <div class="page">
   <h1>Task Category Feedback</h1>
-  <p class="subtitle">Review each proposed task category, confirm whether examples belong, and leave any naming or restructuring suggestions.</p>
+  <p class="subtitle">For each proposed category, mark whether it looks good or needs adjustment. If it needs adjustment, add a note. Expand examples anytime to ground your response — no action required on them.</p>
 
-  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-  <div class="progress-label" id="progressLabel">0 of 19 categories reviewed</div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel">0 of 19 categories reviewed</div>
+  </div>
 
   <div id="categories"></div>
 </div>
@@ -84,27 +89,20 @@
   <span>Reviewed: <strong id="sumReviewed">0</strong> / 19</span>
   <span>Looks Good: <strong id="sumGood">0</strong></span>
   <span>Needs Adjustment: <strong id="sumNeeds">0</strong></span>
-  <button class="btn-submit-all" id="btnSubmitAll" onclick="submitAll()">Submit All Feedback</button>
+  <button class="btn-submit-all" id="btnSubmitAll" onclick="submitAll()">Submit All</button>
 </div>
 
 <script>
 const FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSfE_PwOVUVqLzMVGHznpyE7gaEqzDN9MFWjMh6-8P_vs41uPw/formResponse";
-const FIELDS = {
-  catId: "entry.1867337202",
-  catName: "entry.217536985",
-  approval: "entry.809298087",
-  exFeedback: "entry.833271405",
-  comments: "entry.519619911"
-};
-
+const F = { catId:"entry.1867337202", catName:"entry.217536985", approval:"entry.809298087", exFeedback:"entry.833271405", comments:"entry.519619911" };
 const TOTAL = 1247;
 
 const GROUPS = [
-  { label: "Data Support", color: "#185FA5", ids: [1,2,3,4,5,6] },
-  { label: "GenAI Review", color: "#0F6E56", ids: [7,8,9] },
-  { label: "Linear Review", color: "#993C1D", ids: [10,11] },
-  { label: "Customer Training & Support", color: "#533AB7", ids: [12,13,14] },
-  { label: "Workspace Organization & Management", color: "#5F5E5A", ids: [15,16,17,18,19] },
+  { label:"Data Support", color:"#185FA5", ids:[1,2,3,4,5,6] },
+  { label:"GenAI Review", color:"#0F6E56", ids:[7,8,9] },
+  { label:"Linear Review", color:"#993C1D", ids:[10,11] },
+  { label:"Customer Training & Support", color:"#533AB7", ids:[12,13,14] },
+  { label:"Workspace Organization & Management", color:"#5F5E5A", ids:[15,16,17,18,19] },
 ];
 
 const cats = [
@@ -206,7 +204,7 @@ const cats = [
   ]},
   { id:17, name:"Workspace Organization & Management – Foldering", count:44, examples:[
     { date:"12/7/25", project:"Starlight Strategies", desc:"Search for and folder Board Materials documents, per M. Huerta.", prev:null },
-    { date:"12/2/25", project:"Starlight Strategies", desc:"Create Clawback Letter Documents folder with clawed back and original production versions; perform searches for same documents, per M. Huerta.", prev:null },
+    { date:"12/2/25", project:"Starlight Strategies", desc:"Create Clawback Letter Documents folder with clawed back and original production versions.", prev:null },
     { date:"11/6/25", project:"Starlight Strategies", desc:"Case file review for inaccurate extracted dates/docket numbers.", prev:null },
     { date:"10/7/25", project:"Go Airlines v. IAE", desc:"Clean up duplicative docs from review folders.", prev:null },
   ]},
@@ -225,10 +223,7 @@ const cats = [
 ];
 
 const state = {};
-cats.forEach(c => {
-  state[c.id] = { approval: null, checked: {}, comment: "", submitted: false };
-  c.examples.forEach((_, i) => { state[c.id].checked[i] = true; });
-});
+cats.forEach(c => { state[c.id] = { approval: null, comment: "", submitted: false, open: false }; });
 
 function getColor(id) {
   for (const g of GROUPS) if (g.ids.includes(id)) return g.color;
@@ -253,60 +248,60 @@ function render() {
 
       const wrap = document.createElement("div");
       wrap.className = "category";
-      wrap.id = "cat-" + id;
 
-      const badgeGoodStyle = s.approval === "Looks Good" ? "display:inline-block" : "display:none";
-      const badgeNeedsStyle = s.approval === "Needs Adjustment" ? "display:inline-block" : "display:none";
+      const needsComment = s.approval === "Needs Adjustment";
+      const commentPlaceholder = needsComment ? "What would you change? (naming, scope, examples…)" : "";
 
       wrap.innerHTML = `
-        <div class="cat-header" onclick="toggleCat(${id})">
-          <span class="cat-num">${id}</span>
-          <span class="cat-bar" style="background:${color}"></span>
-          <span class="cat-name">${cat.name}</span>
-          <span class="approval-badges">
-            <span class="badge-good" style="${badgeGoodStyle}">Looks Good</span>
-            <span class="badge-needs" style="${badgeNeedsStyle}">Needs Adjustment</span>
-          </span>
-          <span class="cat-stats">${cat.count} entries &nbsp;·&nbsp; ${pct}%</span>
-          <span class="chevron" id="chev-${id}">▼</span>
-        </div>
-        <div class="cat-body" id="body-${id}">
-          <div class="approval-row">
-            <button class="btn-approval ${s.approval === 'Looks Good' ? 'selected-good' : ''}"
-              onclick="setApproval(${id}, 'Looks Good', event)">✓ Looks Good</button>
-            <button class="btn-approval ${s.approval === 'Needs Adjustment' ? 'selected-needs' : ''}"
-              onclick="setApproval(${id}, 'Needs Adjustment', event)">⚑ Needs Adjustment</button>
+        <div class="cat-row">
+          <div class="cat-num">${id}</div>
+          <div class="cat-bar-col"><div class="cat-bar-inner" style="background:${color}"></div></div>
+          <div class="cat-name-col">
+            <div class="cat-name">${cat.name}</div>
+            <div class="cat-stats">${cat.count} entries · ${pct}%</div>
           </div>
-
-          <div class="examples-label">Examples — check the ones that clearly belong here</div>
-          ${cat.examples.map((ex, i) => `
-            <div class="example">
-              <div class="ex-check"><input type="checkbox" ${s.checked[i] ? "checked" : ""}
-                onchange="setCheck(${id}, ${i}, this.checked)" /></div>
-              <div class="ex-date">${ex.date}</div>
-              <div>
-                <div class="ex-desc">${ex.desc}</div>
-                <div class="ex-project">${ex.project}</div>
-              </div>
-              <div class="ex-prev">
-                <span class="prev-tag ${ex.prev ? '' : 'none'}">${ex.prev || 'no prior task'}</span>
-              </div>
+          <div class="cat-controls">
+            <div class="toggle-wrap">
+              <button class="btn-toggle ${s.approval === 'Looks Good' ? 'active-good' : ''}"
+                onclick="setApproval(${id}, 'Looks Good')">✓ Looks Good</button>
+              <button class="btn-toggle ${s.approval === 'Needs Adjustment' ? 'active-needs' : ''}"
+                onclick="setApproval(${id}, 'Needs Adjustment')">⚑ Needs Adjustment</button>
             </div>
-          `).join("")}
-
-          <div class="comment-section">
-            <label>Suggestions — naming, scope, missing examples, or anything else</label>
-            <textarea placeholder="Optional — leave blank if no suggestions" oninput="setComment(${id}, this.value)">${s.comment}</textarea>
+            ${needsComment ? `
+              <div class="comment-inline">
+                <textarea placeholder="${commentPlaceholder}" oninput="setComment(${id}, this.value)">${s.comment}</textarea>
+              </div>` : `<div style="flex:1"></div>`}
+            ${s.submitted
+              ? `<span class="submitted-check">✓ Sent</span>`
+              : `<button class="btn-submit-cat" onclick="submitOne(${id})" ${!s.approval ? 'disabled' : ''}>Submit</button>`}
+            <div class="examples-toggle" onclick="toggleExamples(${id})">
+              ${s.open ? "▲ Hide examples" : "▼ View examples"}
+            </div>
           </div>
-
-          <div class="submit-row">
-            <button class="btn-submit" onclick="submitOne(${id})" ${s.submitted ? "disabled" : ""}>
-              ${s.submitted ? "Submitted ✓" : "Submit feedback for this category"}
-            </button>
-            <span class="submit-status ${s.submitted ? 'ok' : ''}" id="status-${id}">
-              ${s.submitted ? "Feedback recorded." : ""}
-            </span>
-          </div>
+        </div>
+        <div class="examples-panel ${s.open ? 'open' : ''}">
+          <table class="ex-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Project</th>
+                <th>Prior task</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${cat.examples.map(ex => `
+                <tr>
+                  <td class="col-date">${ex.date}</td>
+                  <td>${ex.desc}</td>
+                  <td class="col-project">${ex.project}</td>
+                  <td class="col-prev">
+                    <span class="prev-tag ${ex.prev ? '' : 'none'}">${ex.prev || 'no prior task'}</span>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
         </div>
       `;
       container.appendChild(wrap);
@@ -316,24 +311,19 @@ function render() {
   updateProgress();
 }
 
-function toggleCat(id) {
-  const body = document.getElementById("body-" + id);
-  const chev = document.getElementById("chev-" + id);
-  const isOpen = body.classList.contains("open");
-  body.classList.toggle("open", !isOpen);
-  chev.textContent = isOpen ? "▼" : "▲";
-}
-
-function setApproval(id, val, e) {
-  e.stopPropagation();
-  state[id].approval = val;
+function setApproval(id, val) {
+  if (state[id].approval === val) { state[id].approval = null; }
+  else { state[id].approval = val; }
+  if (state[id].approval !== "Needs Adjustment") state[id].comment = "";
   render();
-  document.getElementById("body-" + id).classList.add("open");
-  document.getElementById("chev-" + id).textContent = "▲";
 }
 
-function setCheck(id, idx, val) { state[id].checked[idx] = val; }
 function setComment(id, val) { state[id].comment = val; }
+
+function toggleExamples(id) {
+  state[id].open = !state[id].open;
+  render();
+}
 
 function updateProgress() {
   const reviewed = cats.filter(c => state[c.id].approval !== null).length;
@@ -346,50 +336,28 @@ function updateProgress() {
   document.getElementById("sumNeeds").textContent = needs;
 }
 
-function buildPayload(id) {
+function submitOne(id) {
   const cat = cats.find(c => c.id === id);
   const s = state[id];
-  const unchecked = cat.examples.filter((_, i) => !s.checked[i]).map((ex, i) => `Example ${i+1} (${ex.date}): DOES NOT BELONG`);
-  const exFeedback = unchecked.length ? unchecked.join("; ") : "All examples confirmed correct";
+  if (!s.approval) return;
   const params = new URLSearchParams();
-  params.append(FIELDS.catId, String(id));
-  params.append(FIELDS.catName, cat.name);
-  params.append(FIELDS.approval, s.approval || "No response");
-  params.append(FIELDS.exFeedback, exFeedback);
-  params.append(FIELDS.comments, s.comment || "");
-  return params;
-}
-
-function submitOne(id) {
-  const s = state[id];
-  if (!s.approval) {
-    const el = document.getElementById("status-" + id);
-    el.textContent = "Please select Looks Good or Needs Adjustment first.";
-    el.className = "submit-status err";
-    return;
-  }
-  const params = buildPayload(id);
-  const statusEl = document.getElementById("status-" + id);
+  params.append(F.catId, String(id));
+  params.append(F.catName, cat.name);
+  params.append(F.approval, s.approval);
+  params.append(F.exFeedback, "n/a");
+  params.append(F.comments, s.comment || "");
   fetch(FORM_ACTION, {
     method: "POST", mode: "no-cors",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params.toString()
   }).then(() => {
-    s.submitted = true;
-    statusEl.textContent = "Feedback recorded.";
-    statusEl.className = "submit-status ok";
+    state[id].submitted = true;
     render();
-    document.getElementById("body-" + id).classList.add("open");
-  }).catch(() => {
-    statusEl.textContent = "Submission failed — please try again.";
-    statusEl.className = "submit-status err";
   });
 }
 
 function submitAll() {
-  const unsubmitted = cats.filter(c => !state[c.id].submitted && state[c.id].approval !== null);
-  if (!unsubmitted.length) return;
-  unsubmitted.forEach(c => submitOne(c.id));
+  cats.filter(c => state[c.id].approval && !state[c.id].submitted).forEach(c => submitOne(c.id));
 }
 
 render();
