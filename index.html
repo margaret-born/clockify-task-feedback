@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Category Feedback</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f3; color: #1a1a1a; font-size: 15px; line-height: 1.6; }
+  .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 32px; }
+  .progress-bar { height: 4px; background: #e0e0e0; border-radius: 2px; margin-bottom: 32px; }
+  .progress-fill { height: 4px; background: #1a1a2e; border-radius: 2px; transition: width 0.4s ease; }
+  .progress-label { font-size: 12px; color: #888; margin-top: 6px; }
+
+  .category { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+  .cat-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; user-select: none; }
+  .cat-header:hover { background: #fafafa; }
+  .cat-num { font-size: 12px; color: #999; min-width: 20px; }
+  .cat-bar { width: 3px; height: 28px; border-radius: 2px; flex-shrink: 0; }
+  .cat-name { flex: 1; font-size: 14px; font-weight: 500; }
+  .cat-stats { font-size: 12px; color: #888; text-align: right; line-height: 1.4; }
+  .approval-badges { display: flex; gap: 6px; align-items: center; }
+  .badge-good { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #e8f5e9; color: #2e7d32; font-weight: 500; display: none; }
+  .badge-needs { font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #fff3e0; color: #e65100; font-weight: 500; display: none; }
+  .chevron { font-size: 11px; color: #bbb; margin-left: 4px; }
+
+  .cat-body { border-top: 1px solid #f0f0f0; padding: 18px; display: none; }
+  .cat-body.open { display: block; }
+
+  .approval-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .btn-approval { flex: 1; padding: 9px 16px; border-radius: 7px; border: 1.5px solid #ddd; background: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; color: #444; }
+  .btn-approval:hover { border-color: #aaa; }
+  .btn-approval.selected-good { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; }
+  .btn-approval.selected-needs { background: #fff3e0; border-color: #ff9800; color: #e65100; }
+
+  .examples-label { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .example { display: grid; grid-template-columns: 20px 80px 1fr 150px; gap: 10px; align-items: start; padding: 9px 0; border-bottom: 1px solid #f5f5f5; font-size: 12px; }
+  .example:last-child { border-bottom: none; }
+  .ex-check input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; margin-top: 2px; accent-color: #1a1a2e; }
+  .ex-date { color: #888; padding-top: 1px; }
+  .ex-desc { color: #1a1a1a; line-height: 1.5; }
+  .ex-project { font-size: 11px; color: #999; margin-top: 2px; }
+  .ex-prev { text-align: right; }
+  .prev-tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #f0f4ff; color: #3a5bc7; white-space: nowrap; }
+  .prev-tag.none { background: #f5f5f5; color: #bbb; }
+
+  .comment-section { margin-top: 18px; }
+  .comment-section label { font-size: 12px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+  .comment-section textarea { width: 100%; border: 1px solid #ddd; border-radius: 7px; padding: 10px 12px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 72px; color: #1a1a1a; background: #fafafa; outline: none; transition: border-color 0.15s; }
+  .comment-section textarea:focus { border-color: #1a1a2e; background: #fff; }
+
+  .submit-row { margin-top: 14px; display: flex; align-items: center; gap: 12px; }
+  .btn-submit { padding: 9px 22px; background: #1a1a2e; color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+  .btn-submit:hover { opacity: 0.85; }
+  .btn-submit:disabled { opacity: 0.4; cursor: default; }
+  .submit-status { font-size: 12px; color: #888; }
+  .submit-status.ok { color: #2e7d32; }
+  .submit-status.err { color: #c62828; }
+
+  .summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a2e; color: #fff; padding: 12px 24px; display: flex; align-items: center; gap: 20px; font-size: 13px; }
+  .summary-bar span { color: rgba(255,255,255,0.6); }
+  .summary-bar strong { color: #fff; }
+  .btn-submit-all { margin-left: auto; padding: 7px 20px; background: #fff; color: #1a1a2e; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .btn-submit-all:disabled { opacity: 0.4; cursor: default; }
+
+  .group-label { font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.07em; margin: 24px 0 8px; }
+  .group-label:first-child { margin-top: 0; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Task Category Feedback</h1>
+  <p class="subtitle">Review each proposed task category, confirm whether examples belong, and leave any naming or restructuring suggestions.</p>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="progress-label" id="progressLabel">0 of 19 categories reviewed</div>
+
+  <div id="categories"></div>
+</div>
+
+<div class="summary-bar">
+  <span>Reviewed: <strong id="sumReviewed">0</strong> / 19</span>
+  <span>Looks Good: <strong id="sumGood">0</strong></span>
+  <span>Needs Adjustment: <strong id="sumNeeds">0</strong></span>
+  <button class="btn-submit-all" id="btnSubmitAll" onclick="submitAll()">Submit All Feedback</button>
+</div>
+
+<script>
+const FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSfE_PwOVUVqLzMVGHznpyE7gaEqzDN9MFWjMh6-8P_vs41uPw/formResponse";
+const FIELDS = {
+  catId: "entry.1867337202",
+  catName: "entry.217536985",
+  approval: "entry.809298087",
+  exFeedback: "entry.833271405",
+  comments: "entry.519619911"
+};
+
+const TOTAL = 1247;
+
+const GROUPS = [
+  { label: "Data Support", color: "#185FA5", ids: [1,2,3,4,5,6] },
+  { label: "GenAI Review", color: "#0F6E56", ids: [7,8,9] },
+  { label: "Linear Review", color: "#993C1D", ids: [10,11] },
+  { label: "Customer Training & Support", color: "#533AB7", ids: [12,13,14] },
+  { label: "Workspace Organization & Management", color: "#5F5E5A", ids: [15,16,17,18,19] },
+];
+
+const cats = [
+  { id:1, name:"Data Support – Intake & Ingestion", count:195, examples:[
+    { date:"12/23/25", project:"Richmond Global Compass", desc:"Load 1 large (16.9 GB) ingested production volume at request of client A Cauchi. Perform data loading QC, load file mapping.", prev:"Ingestion – Loading Data" },
+    { date:"11/25/25", project:"Phoenix Contact Holdings", desc:"Loaded processed data with associated load files for (1) ESI volume and (2) productions; adjusted ESI data to conform to platform requirements.", prev:"Ingestion – Loading Data" },
+    { date:"10/2/25", project:"2 Njeru v. Aon", desc:"Load 26950-001-001, 002 & 003 at request of client. Perform data loading QC, metadata overlay for mobile collection metadata.", prev:"Ingestion – Loading Data" },
+    { date:"9/27/25", project:"Go Airlines v. IAE", desc:"Load production IAE003 at request of counsel S Priya. Respond to counsel production loading communications. QC production data loading.", prev:null },
+  ]},
+  { id:2, name:"Data Support – QC & Troubleshooting", count:82, examples:[
+    { date:"11/19/25", project:"Samsung v. COSCO", desc:"Ingestion QC. Compare totals and data to the original load file set received. Identify and escalate concerns.", prev:"Ingestion – Troubleshooting" },
+    { date:"12/9/25", project:"Heather Mizrachi v. School District", desc:"Investigate RSMF text file issues and junk files to delete.", prev:null },
+    { date:"10/13/25", project:"Sound Transit v. Walsh", desc:"Additional troubleshooting on load files, ingestions.", prev:"Ingestion – Troubleshooting" },
+    { date:"9/6/25", project:"Yitai", desc:"Troubleshoot ingestion issues on L0001, L0002, L0003, and L0004, coordinate with data ingestion team.", prev:"Ingestion – Troubleshooting" },
+  ]},
+  { id:3, name:"Data Support – Revision & Remediation", count:38, examples:[
+    { date:"12/1/25", project:"13121-00001 Poka Inc.", desc:"Perform coding overlay at request of client A Szeto to update data confidentiality tagging.", prev:"Customer Management – General Support" },
+    { date:"9/19/25", project:"Catalent", desc:"Update document images, text, metadata for Clawback volumes 001 & 005 at request of counsel.", prev:null },
+    { date:"11/25/25", project:"GWU Government Relations", desc:"Overlay FROM metadata for VOL001-004 at request of client W Lang. Respond to data loading communications.", prev:"Ingestion – Loading Data" },
+    { date:"10/22/25", project:"Catalent", desc:"Create coding overlays at request of client A Martin. Respond to client overlay communications.", prev:"Customer Management – General Support" },
+  ]},
+  { id:4, name:"Data Support – Pre-Production Prep", count:67, examples:[
+    { date:"12/15/25", project:"Starlight Strategies", desc:"Create updated searches, foldering for pre-production at request of counsel M Huerta. Create pre-production searches, foldering. Respond to client communications.", prev:"Customer Management – General Support" },
+    { date:"9/25/25", project:"Starlight Strategies", desc:"Create pre-production quality control searches, correspondence with L. Goldman regarding the same.", prev:null },
+    { date:"12/10/25", project:"Starlight Strategies", desc:"Perform pre-production QC checks for the 20251210 BlueOwl Production. Folder and identify documents requiring additional team review.", prev:"Production – Running Production" },
+    { date:"9/24/25", project:"Starlight Strategies", desc:"Create pre-production quality control searches, coordinate and complete bank account PII redactions.", prev:null },
+  ]},
+  { id:5, name:"Data Support – Post-Production QC & Delivery", count:58, examples:[
+    { date:"12/19/25", project:"Heather Mizrachi v. School District", desc:"Perform post production QC checks for VOL003 Production. Prepare for delivery.", prev:"Production – QCing Production" },
+    { date:"12/4/25", project:"MBSC v. NJHA", desc:"Prepare final export for delivery. Create archive and encrypt data for electronic transfer. Draft correspondence providing file transfer link and decryption password to the case team.", prev:"Production – Delivery" },
+    { date:"8/27/25", project:"Chandan Steel", desc:"Post-production quality control of Chandan001, deliver to counsel.", prev:"Production – Delivery" },
+    { date:"11/13/25", project:"bit-x-bit", desc:"Create encrypted zip archive of final export. Upload to client sharefile site. Draft and deliver email with export details and the zip file password.", prev:"Production – Delivery" },
+  ]},
+  { id:6, name:"Data Support – Non-Production Exports", count:29, examples:[
+    { date:"12/8/25", project:"Leo Riot v. Apex Trader", desc:"Prepare export for docs listed in Riot Skype Deletions and find any other versions.", prev:null },
+    { date:"9/29/25", project:"Ashby & Geddes", desc:"Export production of exhibits based on C. Gaul specifications.", prev:null },
+    { date:"12/16/25", project:"Leo Riot v. Apex Trader", desc:"Analyze reports that identify empty messages from a specific user from the Apex and QST productions. Create cross-reference worksheet.", prev:"Other" },
+    { date:"9/23/25", project:"Leo Riot v. Apex Trader", desc:"Export expert reliance and ROG response docs.", prev:"Customer Management – General Support" },
+  ]},
+  { id:7, name:"GenAI Review – Pre-Review Setup & Prep", count:178, examples:[
+    { date:"12/17/25", project:"Panini", desc:"Create date filter batches for Tranche 5.", prev:"AI Review – Review Setup" },
+    { date:"12/22/25", project:"GWU Government Relations", desc:"Revise genAI review prompts and glossary, per D. Stanton.", prev:null },
+    { date:"11/20/25", project:"Panini", desc:"Combine existing and refinement prompts in preparation of Tranche 2 set up.", prev:"AI Review – Review Setup" },
+    { date:"8/26/25", project:"Terran Biosciences", desc:"Edit defensive depo prep prompts and glossary.", prev:"AI Review – Review Setup" },
+  ]},
+  { id:8, name:"GenAI Review – QC, Validation, & Analysis", count:143, examples:[
+    { date:"12/29/25", project:"Panini", desc:"Custom foldering of results, Part 3 and custom report.", prev:"AI Review – QCing Review" },
+    { date:"11/20/25", project:"Samsung v. COSCO", desc:"QC 11/18 GenAI Review and set up 2LR.", prev:null },
+    { date:"12/8/25", project:"Walkers / Appleby", desc:"QC GenAI results.", prev:null },
+    { date:"9/16/25", project:"Celsius/EFH Arbitration", desc:"Review/revise new set of prompts and update glossary as needed.", prev:"AI Review – Review Setup" },
+  ]},
+  { id:9, name:"GenAI Review – Post-Review Delivery & 2LR Handoff", count:34, examples:[
+    { date:"12/15/25", project:"Ferdowsi", desc:"Create Gen AI Coding rationale overlay load files at request of client D R Murphy. Respond to Gen AI Coding overlay load file creation communications.", prev:"Customer Management – General Support" },
+    { date:"9/11/25", project:"Levona", desc:"Coordinate tagging overlay and export of AI rationales for hot documents identified by M. Roznovak.", prev:null },
+    { date:"9/29/25", project:"Pillsbury Winthrop Shaw Pittman", desc:"Prepare exports of AI document tagging and AI rationales for MedStar v. Cigna, per R. Rennagel/D. Stanton.", prev:null },
+    { date:"8/30/25", project:"Terran Biosciences", desc:"Generate tagging overlay for Relativity from defensive AI document review, per K. Marini.", prev:null },
+  ]},
+  { id:10, name:"Linear Review – Pre-Review Setup & Prep", count:71, examples:[
+    { date:"12/29/25", project:"Sasson v. All Ways", desc:"Build and run boolean privilege screener search in preparation for linear privilege review.", prev:null },
+    { date:"12/22/25", project:"Sasson v. All Ways", desc:"Lead project kickoff call.", prev:null },
+    { date:"11/3/25", project:"Panini", desc:"Folder/prep workspace for 2LR; track down information and write case team update letter.", prev:null },
+    { date:"10/20/25", project:"Panini", desc:"Attend call re next steps for 2LR; migrate tags from GenAI Review into 2LR palette.", prev:null },
+  ]},
+  { id:11, name:"Linear Review – Post-Review QC & Delivery", count:44, examples:[
+    { date:"12/30/25", project:"Heather Mizrachi v. School District", desc:"Run and QC VOL004; create priv log.", prev:null },
+    { date:"12/3/25", project:"Heather Mizrachi v. School District", desc:"Rerun VOL002 and update priv log; export PDF version of VOL002.", prev:null },
+    { date:"7/24/25", project:"Apollo, Anguilla SSB v. Black", desc:"Creating sheet for privilege review with rationales.", prev:"Customer Management – General Support" },
+    { date:"9/2/25", project:"Leo Riot v. Apex Trader", desc:"Create corresponding priv log for QST_047 & QST_048.", prev:null },
+  ]},
+  { id:12, name:"Customer Training & Support – Client Call (Lead)", count:52, examples:[
+    { date:"12/18/25", project:"Richmond Global Compass", desc:"Lead case team platform training call.", prev:null },
+    { date:"12/11/25", project:"Walkers / Appleby", desc:"Conduct workspace data loading training at request of client J Saunders.", prev:"Customer Management – General Support" },
+    { date:"9/17/25", project:"Day Pitney", desc:"Lead project kickoff call.", prev:null },
+    { date:"8/22/25", project:"King & Spalding (new case)", desc:"Lead case team onboarding call.", prev:null },
+  ]},
+  { id:13, name:"Customer Training & Support – Client Call (Substantive Contribution)", count:41, examples:[
+    { date:"11/24/25", project:"Samsung v. COSCO", desc:"Call with case team to discuss ongoing 2L, refinement results, & production.", prev:null },
+    { date:"12/19/25", project:"bit-x-bit", desc:"Call with E. Lemons and M. Lindsey re Jewett refinement strategies.", prev:null },
+    { date:"10/6/25", project:"Sound Transit v. Walsh", desc:"Videoconference with J. Schirmer, K. Patterson, S. Falcone regarding review planning and strategy.", prev:null },
+    { date:"9/11/25", project:"Levona", desc:"Teleconference with M. Roznovak re genAI review next steps.", prev:null },
+  ]},
+  { id:14, name:"Customer Training & Support – Written Support & Guidance", count:63, examples:[
+    { date:"12/16/25", project:"Eurotunnel", desc:"Call with C. El Zeinaty re document review workflows; draft email memorializing conversation.", prev:null },
+    { date:"11/14/25", project:"Starlight Strategies", desc:"Draft email correspondence to M. Ayala regarding date time view, create custom sort order and view.", prev:null },
+    { date:"12/9/25", project:"Quinn Emanuel", desc:"Create estimates for potential new matter data loading ETCs, times and sizes, at request of client A Martin.", prev:"Customer Engagement – Engagement Emails" },
+    { date:"9/3/25", project:"Pillsbury Winthrop Shaw Pittman", desc:"Draft training materials and product documentation (eDiscovery Workflows).", prev:null },
+  ]},
+  { id:15, name:"Workspace Organization & Management – Searching", count:58, examples:[
+    { date:"12/12/25", project:"Starlight Strategies", desc:"Create searches, identify and folder documents within specific date ranges from the IM productions at the request of the case team.", prev:"Customer Management – General Support" },
+    { date:"12/5/25", project:"Starlight Strategies", desc:"Build multiple searches to find production version of SEC filing identified by M. Ji.", prev:null },
+    { date:"11/7/25", project:"Starlight Strategies", desc:"Perform custom searches for M. Huerta and correspond with counsel.", prev:null },
+    { date:"9/23/25", project:"Coupang", desc:"Run saved searches at request of R. Swindall, provide hit counts to counsel.", prev:null },
+  ]},
+  { id:16, name:"Workspace Organization & Management – Tagging", count:36, examples:[
+    { date:"12/22/25", project:"Samsung v. COSCO", desc:"Bulk tag AEO and confidential documents.", prev:null },
+    { date:"11/25/25", project:"Samsung v. COSCO", desc:"Bulk tag confidentiality designations and ensure AEO is not overridden.", prev:null },
+    { date:"9/22/25", project:"Panini", desc:"Update search terms, search term logic at request of client S McElroy.", prev:null },
+    { date:"10/21/25", project:"Panini", desc:"Remove tagging for each issue on any documents outside date range.", prev:null },
+  ]},
+  { id:17, name:"Workspace Organization & Management – Foldering", count:44, examples:[
+    { date:"12/7/25", project:"Starlight Strategies", desc:"Search for and folder Board Materials documents, per M. Huerta.", prev:null },
+    { date:"12/2/25", project:"Starlight Strategies", desc:"Create Clawback Letter Documents folder with clawed back and original production versions; perform searches for same documents, per M. Huerta.", prev:null },
+    { date:"11/6/25", project:"Starlight Strategies", desc:"Case file review for inaccurate extracted dates/docket numbers.", prev:null },
+    { date:"10/7/25", project:"Go Airlines v. IAE", desc:"Clean up duplicative docs from review folders.", prev:null },
+  ]},
+  { id:18, name:"Workspace Organization & Management – Case File", count:31, examples:[
+    { date:"12/12/25", project:"Film Finances", desc:"Case set up – add users, circulate resources, download & review background materials.", prev:null },
+    { date:"10/27/25", project:"Leo Riot v. Apex Trader", desc:"Native overlays prepared.", prev:null },
+    { date:"10/24/25", project:"Heather Mizrachi v. School District", desc:"Download collection batch from bit-x-bit, upload to Syllo, email link to case team.", prev:null },
+    { date:"9/24/25", project:"Gormsen v. Meta", desc:"Download, process and upload docs to Case File.", prev:null },
+  ]},
+  { id:19, name:"Workspace Organization & Management – Facts & Chronologies", count:38, examples:[
+    { date:"11/17/25", project:"Walkers / Appleby", desc:"Extractions and find evidence for chronology on expert reports.", prev:null },
+    { date:"11/4/25", project:"U.S. ex rel. Shepherd v. Fluor", desc:"Extract facts from pages 13-31 of 507-1 (memo) to run Find Evidence.", prev:null },
+    { date:"11/18/25", project:"Walkers / Appleby", desc:"Add facts to fact set based on Colin Hanson's Expert Report.", prev:null },
+    { date:"8/1/25", project:"Terran Biosciences", desc:"Manually update dates in Facts & Evidence timeline.", prev:"Customer Management – General Support" },
+  ]},
+];
+
+const state = {};
+cats.forEach(c => {
+  state[c.id] = { approval: null, checked: {}, comment: "", submitted: false };
+  c.examples.forEach((_, i) => { state[c.id].checked[i] = true; });
+});
+
+function getColor(id) {
+  for (const g of GROUPS) if (g.ids.includes(id)) return g.color;
+  return "#888";
+}
+
+function render() {
+  const container = document.getElementById("categories");
+  container.innerHTML = "";
+
+  GROUPS.forEach(g => {
+    const lbl = document.createElement("div");
+    lbl.className = "group-label";
+    lbl.textContent = g.label;
+    container.appendChild(lbl);
+
+    g.ids.forEach(id => {
+      const cat = cats.find(c => c.id === id);
+      const s = state[id];
+      const pct = ((cat.count / TOTAL) * 100).toFixed(1);
+      const color = g.color;
+
+      const wrap = document.createElement("div");
+      wrap.className = "category";
+      wrap.id = "cat-" + id;
+
+      const badgeGoodStyle = s.approval === "Looks Good" ? "display:inline-block" : "display:none";
+      const badgeNeedsStyle = s.approval === "Needs Adjustment" ? "display:inline-block" : "display:none";
+
+      wrap.innerHTML = `
+        <div class="cat-header" onclick="toggleCat(${id})">
+          <span class="cat-num">${id}</span>
+          <span class="cat-bar" style="background:${color}"></span>
+          <span class="cat-name">${cat.name}</span>
+          <span class="approval-badges">
+            <span class="badge-good" style="${badgeGoodStyle}">Looks Good</span>
+            <span class="badge-needs" style="${badgeNeedsStyle}">Needs Adjustment</span>
+          </span>
+          <span class="cat-stats">${cat.count} entries &nbsp;·&nbsp; ${pct}%</span>
+          <span class="chevron" id="chev-${id}">▼</span>
+        </div>
+        <div class="cat-body" id="body-${id}">
+          <div class="approval-row">
+            <button class="btn-approval ${s.approval === 'Looks Good' ? 'selected-good' : ''}"
+              onclick="setApproval(${id}, 'Looks Good', event)">✓ Looks Good</button>
+            <button class="btn-approval ${s.approval === 'Needs Adjustment' ? 'selected-needs' : ''}"
+              onclick="setApproval(${id}, 'Needs Adjustment', event)">⚑ Needs Adjustment</button>
+          </div>
+
+          <div class="examples-label">Examples — check the ones that clearly belong here</div>
+          ${cat.examples.map((ex, i) => `
+            <div class="example">
+              <div class="ex-check"><input type="checkbox" ${s.checked[i] ? "checked" : ""}
+                onchange="setCheck(${id}, ${i}, this.checked)" /></div>
+              <div class="ex-date">${ex.date}</div>
+              <div>
+                <div class="ex-desc">${ex.desc}</div>
+                <div class="ex-project">${ex.project}</div>
+              </div>
+              <div class="ex-prev">
+                <span class="prev-tag ${ex.prev ? '' : 'none'}">${ex.prev || 'no prior task'}</span>
+              </div>
+            </div>
+          `).join("")}
+
+          <div class="comment-section">
+            <label>Suggestions — naming, scope, missing examples, or anything else</label>
+            <textarea placeholder="Optional — leave blank if no suggestions" oninput="setComment(${id}, this.value)">${s.comment}</textarea>
+          </div>
+
+          <div class="submit-row">
+            <button class="btn-submit" onclick="submitOne(${id})" ${s.submitted ? "disabled" : ""}>
+              ${s.submitted ? "Submitted ✓" : "Submit feedback for this category"}
+            </button>
+            <span class="submit-status ${s.submitted ? 'ok' : ''}" id="status-${id}">
+              ${s.submitted ? "Feedback recorded." : ""}
+            </span>
+          </div>
+        </div>
+      `;
+      container.appendChild(wrap);
+    });
+  });
+
+  updateProgress();
+}
+
+function toggleCat(id) {
+  const body = document.getElementById("body-" + id);
+  const chev = document.getElementById("chev-" + id);
+  const isOpen = body.classList.contains("open");
+  body.classList.toggle("open", !isOpen);
+  chev.textContent = isOpen ? "▼" : "▲";
+}
+
+function setApproval(id, val, e) {
+  e.stopPropagation();
+  state[id].approval = val;
+  render();
+  document.getElementById("body-" + id).classList.add("open");
+  document.getElementById("chev-" + id).textContent = "▲";
+}
+
+function setCheck(id, idx, val) { state[id].checked[idx] = val; }
+function setComment(id, val) { state[id].comment = val; }
+
+function updateProgress() {
+  const reviewed = cats.filter(c => state[c.id].approval !== null).length;
+  const good = cats.filter(c => state[c.id].approval === "Looks Good").length;
+  const needs = cats.filter(c => state[c.id].approval === "Needs Adjustment").length;
+  document.getElementById("progressFill").style.width = (reviewed / 19 * 100) + "%";
+  document.getElementById("progressLabel").textContent = `${reviewed} of 19 categories reviewed`;
+  document.getElementById("sumReviewed").textContent = reviewed;
+  document.getElementById("sumGood").textContent = good;
+  document.getElementById("sumNeeds").textContent = needs;
+}
+
+function buildPayload(id) {
+  const cat = cats.find(c => c.id === id);
+  const s = state[id];
+  const unchecked = cat.examples.filter((_, i) => !s.checked[i]).map((ex, i) => `Example ${i+1} (${ex.date}): DOES NOT BELONG`);
+  const exFeedback = unchecked.length ? unchecked.join("; ") : "All examples confirmed correct";
+  const params = new URLSearchParams();
+  params.append(FIELDS.catId, String(id));
+  params.append(FIELDS.catName, cat.name);
+  params.append(FIELDS.approval, s.approval || "No response");
+  params.append(FIELDS.exFeedback, exFeedback);
+  params.append(FIELDS.comments, s.comment || "");
+  return params;
+}
+
+function submitOne(id) {
+  const s = state[id];
+  if (!s.approval) {
+    const el = document.getElementById("status-" + id);
+    el.textContent = "Please select Looks Good or Needs Adjustment first.";
+    el.className = "submit-status err";
+    return;
+  }
+  const params = buildPayload(id);
+  const statusEl = document.getElementById("status-" + id);
+  fetch(FORM_ACTION, {
+    method: "POST", mode: "no-cors",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params.toString()
+  }).then(() => {
+    s.submitted = true;
+    statusEl.textContent = "Feedback recorded.";
+    statusEl.className = "submit-status ok";
+    render();
+    document.getElementById("body-" + id).classList.add("open");
+  }).catch(() => {
+    statusEl.textContent = "Submission failed — please try again.";
+    statusEl.className = "submit-status err";
+  });
+}
+
+function submitAll() {
+  const unsubmitted = cats.filter(c => !state[c.id].submitted && state[c.id].approval !== null);
+  if (!unsubmitted.length) return;
+  unsubmitted.forEach(c => submitOne(c.id));
+}
+
+render();
+</script>
+</body>
+</html>
