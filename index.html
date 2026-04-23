@@ -57,7 +57,6 @@
   table.ex-table td { padding: 9px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #1a1a1a; }
   .prev-tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 4px; background: #f0f4ff; color: #3a5bc7; }
 
-  /* NEW: General Feedback Area */
   .general-feedback-wrap { margin-top: 40px; }
   .general-feedback-wrap textarea {
     width: 100%; height: 120px; border-radius: 10px; border: 1px solid #e0e0e0; 
@@ -125,7 +124,15 @@ const cats = [
   { "id": 8, "name": "GenAI Review – QC, Validation, & Analysis", "definition": "Quality-controlling AI review results, building QC folders and samples, analyzing outputs for accuracy, refining prompts based on results, and preparing metrics or reports on review performance.", "examples": [{ "desc": "Quality-control AI results and refine prompts based on validation findings.", "prev": "None" }, { "desc": "Analyze AI metrics and prepare reports on review accuracy and performance.", "prev": "None" }] },
   { "id": 9, "name": "GenAI Review – Post-Review Delivery & 2LR Handoff", "definition": "Exporting, foldering, tagging, or otherwise preparing results of a GenAI review for the case team’s 2LR/human review phase.", "examples": [{ "desc": "Prepare 2LR folders for 12/16 review results and families.", "prev": "None" }, { "desc": "GenAI QC, Reporting, Tag Migration and Palette Set up", "prev": "AI Review - QCing Review" }, { "desc": "Bulk tag documents in 2LR folders based on GenAI high-confidence results.", "prev": "None" }] },
   { "id": 10, "name": "Training & Support – Client Call (Lead)", "definition": "Leading a client-facing call, including platform training sessions, case kickoffs, workflow walkthroughs, or strategic review planning discussions where you are the primary presenter or facilitator.", "examples": [{ "desc": "Lead Syllo platform training at request of client.", "prev": "None" }, { "desc": "Training call.", "prev": "None" }] },
-  { "id": 11, "name": "Training & Support – Client Call (Substantive Contribution)", "definition": "Participating in a client-facing call in a supporting role (e.g., contributing expertise on specific topics such as review strategy or data issues) without leading the overall session.", "examples": [{ "desc": "Teleconference with E. Kilborne regarding data download and workflow strategy.", "prev": "None" }] },
+  { 
+    "id": 11, 
+    "name": "Training & Support – Client Call (Substantive Contribution)", 
+    "definition": "Participating in a client-facing call in a supporting role (e.g., contributing expertise on specific topics such as review strategy or data issues) without leading the overall session.", 
+    "examples": [
+      { "desc": "Participated in client call to address specific technical data issues.", "prev": "None" },
+      { "desc": "Contribution to review strategy discussion during case team meeting.", "prev": "None" }
+    ] 
+  },
   { "id": 12, "name": "Training & Support – General Support & Guidance", "definition": "Answering client questions or addressing issues via email/outside of live calls.", "examples": [{ "desc": "Draft training materials and product documentation.", "prev": "None" }, { "desc": "Drafting engagement emails and responding to client queries.", "prev": "None" }] },
   { "id": 13, "name": "eDiscovery Organization & Management", "definition": "Searching, foldering, tagging, or batching at the direction of the case team.", "examples": [{ "desc": "Refine keyword searches and run search term hit reports for case team.", "prev": "None" }, { "desc": "Reorganize folder structure to mirror case custodian list.", "prev": "None" }] },
   { "id": 14, "name": "Case File Support", "definition": "Uploading, organizing, and managing documents in the Case File, including background materials, court filings, transcripts, and other reference documents that support the case team's research and review work.", "examples": [{ "desc": "Download notes and depo transcript items and upload to case file.", "prev": "None" }, { "desc": "Upload and organize court filings and background materials in Case File.", "prev": "None" }] },
@@ -208,7 +215,7 @@ async function submitAll() {
   btn.disabled = true;
 
   // REPLACE THE URL BELOW WITH YOUR APPS SCRIPT WEB APP URL
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHz1NtspTagm2aYR303SZ2nfHZO5InT_dunD3ibJqK7J_nRmWfyfgBRksMIizDiNQvUw/exec";
+  const SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
 
   try {
     await fetch(SCRIPT_URL, {
