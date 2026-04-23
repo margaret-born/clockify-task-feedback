@@ -9,7 +9,13 @@
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #00003f; color: #ffffff; font-size: 15px; line-height: 1.6; }
   .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px 100px; }
   h1 { font-size: 22px; font-weight: 500; margin-bottom: 12px; color: #ffffff; }
-  .subtitle { font-size: 13px; color: rgba(255, 255, 255, 0.8); margin-bottom: 28px; }
+  .subtitle { font-size: 13px; color: rgba(255, 255, 255, 0.8); margin-bottom: 24px; }
+
+  /* NEW: Name Input Styling */
+  .user-info-wrap { background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 28px; display: flex; align-items: center; gap: 15px; }
+  .user-info-wrap label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255, 255, 255, 0.7); }
+  .name-input { background: #ffffff; border: none; border-radius: 6px; padding: 10px 14px; font-size: 14px; width: 300px; color: #1a1a2e; outline: none; }
+  .name-input:focus { box-shadow: 0 0 0 3px rgba(58, 91, 199, 0.4); }
 
   .progress-wrap { margin-bottom: 28px; }
   .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; }
@@ -19,16 +25,12 @@
   .group-label { font-size: 11px; font-weight: 500; color: rgba(255, 255, 255, 0.5); text-transform: uppercase; letter-spacing: 0.07em; margin: 24px 0 8px; }
 
   .category { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; margin-bottom: 12px; overflow: hidden; color: #1a1a1a; }
-
   .cat-row { display: grid; grid-template-columns: 28px 4px 1fr 380px; gap: 0; align-items: stretch; min-height: 80px; }
-
   .cat-num { display: flex; align-items: center; justify-content: center; font-size: 11px; color: #bbb; padding: 0 6px; }
   .cat-bar-inner { width: 4px; height: 100%; }
-
   .cat-name-col { display: flex; flex-direction: column; justify-content: center; padding: 16px; gap: 4px; }
   .cat-name { font-size: 15px; font-weight: 600; color: #1a1a2e; }
   .cat-definition { font-size: 13px; color: #555; line-height: 1.4; font-style: italic; }
-
   .cat-controls { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-left: 1px solid #f0f0f0; background: #fcfcfc; justify-content: center; }
 
   .toggle-wrap { display: flex; gap: 8px; flex-shrink: 0; }
@@ -69,6 +71,11 @@
     <strong>ASK:</strong> Review the proposed categories and definitions below. Mark whether each Looks Good or Needs Adjustment. If you choose the latter, please provide your thoughts in the note space that pops up. Examples of real logged entries from 2025 are available to help ground the categories.
     <br><br>
     <strong>CONTEXT:</strong> As we transition away from a 'free-text-description-first' style of entry to a 'standardized-task-selection-first' style of entry, it's critical that we choose task categories that accurately reflect the work we're doing. After exporting and reviewing the descriptions of our ~2,000 entries from 2025, the below should theoretically capture 90-95% of our work. A final category called "Other - See Description" will be added to allow for new or otherwise unforeseen tasks, and a semi-regular audit will identify gaps for taxonomy updates from any entries logged as such.
+  </div>
+
+  <div class="user-info-wrap">
+    <label for="reviewerName">Reviewer Name:</label>
+    <input type="text" id="reviewerName" class="name-input" placeholder="Enter your full name">
   </div>
 
   <div class="progress-wrap">
@@ -329,7 +336,15 @@ function updateProgress() {
 }
 
 function submitAll() {
-  alert("Reviews submitted for " + document.getElementById("sumReviewed").textContent + " categories.");
+  const name = document.getElementById("reviewerName").value.trim();
+  if (!name) {
+    alert("Please enter your name in the Reviewer Name field before submitting.");
+    document.getElementById("reviewerName").focus();
+    return;
+  }
+  
+  const reviewedCount = document.getElementById("sumReviewed").textContent;
+  alert("Thank you, " + name + "! Reviews submitted for " + reviewedCount + " categories.");
 }
 
 render();
